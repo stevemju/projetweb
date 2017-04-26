@@ -16,8 +16,9 @@ router.put('/user/location/:idUser', service.updateUserLocation);
 
 router.get('/users/', service.listAllPhones);
 router.get('/users/:phone', service.isThePhone);
+router.get('/users/:localisation/:rayon', service.listUsersWithin);
 
-router.post('/user/:phone', service.addUser);
+router.post('/user/', service.addUser);
 
 
 module.exports = router

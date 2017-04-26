@@ -29,7 +29,7 @@ function isThePhone(req, res) {
          if (error == null)
          {
             res.status(200).json({
-                phoneIsHere : data.count
+                isHere : data
             });
             console.log(data);
          }
@@ -45,15 +45,30 @@ function isThePhone(req, res) {
 function addUser(req, res)
 {
     var phone = req.body.phone
+    var nom = req.body.nom
+    var prenom = req.body.prenom
+    var localisation = req.body.localisation
     
     db.addPhoneUser(phone, localisation, nom, prenom, function () {
         res.status(200).send("ok");
     })
 }
 
+function listUsersWithin(req, res)
+{
+    const localisation = req.params.localisation;
+    const rayon = req.params.rayon;
+    
+    db.addPhoneUser(localisation, rayon, function () {
+        res.status(200).send("ok");
+    })
+}
+
+
+
 module.exports = {
-  // exporter toutes les fonctions !!!!
   listAllPhones,
   isThePhone,
-  addUser
+  addUser,
+  listUsersWithin
 };

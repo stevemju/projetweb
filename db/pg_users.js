@@ -62,7 +62,7 @@ function getThePhone(phone_user, callback) {
 
 function addPhoneUser(phone, localisation, nom, prenom, callback)
 {
-    var requete = `insert into public.users (phone, localisation, nom, prenom) VALUES ('${phone}', '${localisation}', '${nom}', '${prenom}')`
+    var requete = `INSERT INTO public.users (phone, localisation, nom, prenom) VALUES ('${phone}', '${localisation}', '${nom}', '${prenom}')`
     console.log(requete);
     
     db.none(requete, null).
@@ -73,9 +73,22 @@ function addPhoneUser(phone, localisation, nom, prenom, callback)
     })
 }
 
+function getUsersWithin(localisation, rayon, callback) {
+	var requete = `SELECT phone FROM public.users where st_dwithin(users.localisation, '${localisation}', ${rayon})`
+    console.log(requete);
+    
+    db.any(requete, null)
+            .then(function (data)  {
+                callback(null, data)
+    })
+            .catch(function(error)  {
+                callback(error, null)
+    })    
+}
+
 module.exports = {
-  // exporter toutes les fonctions !!!!
   getAllPhones,
   getThePhone,
-  addPhoneUser
+  addPhoneUser,
+  getUsersWithin
 };
