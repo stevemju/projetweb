@@ -7,7 +7,7 @@ function listAllPhones(req, res) {
          if (error == null)
          {
             res.status(200).json({
-                phone : data.phone
+                phone : data
             });
             console.log(data);
          }
