@@ -15,10 +15,12 @@ router.put('/user/location/:idUser', service.updateUserLocation);
 */
 
 router.get('/users/', service.listAllPhones);
-router.get('/users/:phone', service.isThePhone);
+router.get('/user/:phone', service.isThePhone);
 router.get('/users/:localisation/:rayon', service.listUsersWithin);
 
 router.post('/user/', service.addUser);
+router.put('/user/', service.updateUserLocalisation);
 
+router.delete('/user/:phone', service.deleteUser);
 
 module.exports = router

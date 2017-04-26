@@ -59,16 +59,48 @@ function listUsersWithin(req, res)
     const localisation = req.params.localisation;
     const rayon = req.params.rayon;
     
-    db.addPhoneUser(localisation, rayon, function () {
+    db.getUsersWithin(localisation, rayon, function(error,data) 
+     {
+         if (error == null)
+         {
+            res.status(200).json({
+                users : data
+            });
+            console.log(data);
+         }
+         else
+         {
+             console.log(error);
+             res.status(500).send(error);
+         }
+    })
+}
+
+function updateUserLocalisation(req, res)
+{
+    var localisation = req.body.localisation;
+    var phone = req.body.phone;
+    
+    db.updateUserLoc(localisation, phone, function() {
         res.status(200).send("ok");
     })
 }
 
+function deleteUser(req, res)
+{
+    var phone = req.params.phone;
+    
+    db.deleteIt(phone, function() {
+        res.status(200).send("ok");
+    })
+}
 
 
 module.exports = {
   listAllPhones,
   isThePhone,
   addUser,
-  listUsersWithin
+  listUsersWithin, 
+  updateUserLocalisation,
+  deleteUser
 };
