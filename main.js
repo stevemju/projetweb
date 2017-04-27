@@ -29,15 +29,19 @@ io.on('connection', function (socket) {
 	  	console.log(message)
 	  	io.sockets.emit('send_me_a_check');
 	  });
+
 	  // Alexis envoie un message, je veux que Nicolas sache qu'Alexis a envoyé un message
 	  socket.on('check', function() { 
 	  	if (data.phone == '0630637680') {
+	  		console.log('Check reçu sur serveur : à envoyer à 0630637680');
      		io.sockets.in(data.phone).emit('receive_msg', {msg: 'Nicolas on a checké ta base'});
  		}
  		if (data.phone == '0658267981') {
+ 			console.log('Check reçu sur serveur : à envoyer à 0658267981');
 			io.sockets.in(data.phone).emit('receive_msg', {msg: 'Alexis on a checké ta base'});
  		}
  	})
+	  // IL faut que l'événement soit déclenché par le client pour qu'on puisse lui adresser la parole directement et qu'à LUI
   });
   // on envoie les messages en attente
 });
