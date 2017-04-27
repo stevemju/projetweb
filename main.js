@@ -12,13 +12,13 @@ var io = require('socket.io')(server);
 
 io.on('connection', function (socket) {
 	// Nouvelle connection !
-	socket.on('new_connection', function(data) {
+	socket.on('join', function(data) {
         socket.phone = data.phone;
         console.log('Nouvelle connexion');
     });
 
 	// on lui envoie les messages en attente 
-	socket.emit('receive_msg', 'On a checké ta base ' + socket.phone);
+	socket.emit('receive_msg', {msg:'On a checké ta base ' + socket.phone});
 
 	socket.on('message', function(message) {
 	  	// écrire dans la BDD les messages
@@ -29,7 +29,8 @@ io.on('connection', function (socket) {
 
 	socket.on('check', function() {
 		// on vérifie s'il y a des nouveaux messages dans la bdd 
-		socket.emit('receive_msg', 'Tu as un nouveau message :) ' + socket.phone);
+		console.log('Check reçu sur serveur : à envoyer à ' + socket.phone);
+		socket.emit('receive_msg', {msg:'Tu as un nouveau message :) ' + socket.phone});
 	});
 });
 /*
