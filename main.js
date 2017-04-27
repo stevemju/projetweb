@@ -16,11 +16,19 @@ io.on('connection', function (socket) {
     socket.join(data.phone); // We are using room of socket io
 
 	// On check si le numéro de téléphone qui vient d’établir une connection a des messages en attente ou pas : code à écrire si c’est le cas :
-      io.sockets.in(data.phone).emit('receive_msg', {msg: 'Vous aviez un message en attente alors le voici :)'});
+	// Si message en attente : on suppose que nico a des messages en attente mais pas alexis
+	if (data.phone == '0630637680') {
+     io.sockets.in(data.phone).emit('receive_msg', {msg: 'Nicolas tu avais un message !!!'});
+ 	}
+ 	if (data.phone == '0658267981') {
+		io.sockets.in(data.phone).emit('receive_msg', {msg: 'Coucou Alexis t es tout bien'});
+ 	}
 	// on écoute s’il y a des messages provenant des clients:
-		socket.on('message', function(message) {console.log(message)});
+	  socket.on('message', function(message) {
+	  	// écrire dans la BDD les messages
+	  	console.log(message)
+	  });
   });
-
 });
 
 
