@@ -10,19 +10,19 @@ app.use('/api/', users_router);
 
 var io = require('socket.io')(server);
 
-io.on('connection', function(socket) {
 
-	socket.send('Un client vient de se connecter');
-    
-    
-    // on écoute la future déconnection de la socket nouvellement créée
-    //socket_client.on('disconnect', function(){
-     //   nbclient--; 
-        // on prévient tout le monde du nouveau nombre de 
-        // clients sur l'événement broadcast
-      //  io.sockets.emit('broadcast', nbclient) 
-    //})
-})
+io.on('connection', function (socket) {
+  socket.on('join', function (data) {
+    socket.join(data.phone); // We are using room of socket io
+
+	// On check si le numéro de téléphone qui vient d’établir une connection a des messages en attente ou pas : code à écrire si c’est le cas :
+      io.sockets.in(data.phone).emit('receive_msg', {msg: 'Vous aviez un message en attente alors le voici :)'});
+	// on écoute s’il y a des messages provenant des clients:
+		socket.on('message', function(message) {console.log(message)});
+  });
+
+});
+
 
 /*io.on('connect', function (socket) {
     console.log("Start animation");
