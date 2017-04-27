@@ -10,7 +10,29 @@ app.use('/api/', users_router);
 
 var io = require('socket.io')(server);
 
+io.on('connection', function (socket) {
+	// Nouvelle connection !
+	socket.on('new_connection', function(data) {
+        socket.phone = data.phone;
+        console.log('Nouvelle connexion');
+    });
 
+	// on lui envoie les messages en attente 
+	socket.emit('receive_msg', 'On a checké ta base ' + socket.phone);
+
+	socket.on('message', function(message) {
+	  	// écrire dans la BDD les messages
+	  	console.log(message)
+	  	// dire à tout le monde d'envoyer un check
+	  	socket.broadcast.emit('send_me_a_check');
+	  });
+
+	socket.on('check', function() {
+		// on vérifie s'il y a des nouveaux messages dans la bdd 
+		socket.emit('receive_msg', 'Tu as un nouveau message :) ' + socket.phone);
+	});
+});
+/*
 io.on('connection', function (socket) {
   socket.on('join', function (data) {
     socket.join(data.phone); // We are using room of socket io
@@ -45,7 +67,7 @@ io.on('connection', function (socket) {
   });
   // on envoie les messages en attente
 });
-
+*/
 
 /*io.on('connect', function (socket) {
     console.log("Start animation");
