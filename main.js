@@ -9,29 +9,65 @@ var users_services = require('./services/users')
 app.use('/api/', users_router);
 
 var io = require('socket.io')(server);
+var phones_connected = {};
+var all_messages;
+var i, n;
 
 io.on('connection', function (socket) {
-	// Nouvelle connection !
+	var phone;
+	// Nouvelle connexion !
 	socket.on('join', function(data) {
-        socket.phone = data.phone;
+        phones_connected[data.phone] = socket.id;
+        console.log(phones_connected[data.phone]);
+        phone = data.phone;
         console.log('Nouvelle connexion');
+        socket.emit('receive_msg', 'On a checké ta base ' + phone);
+		// on lui envoie les messages en attente 
+		users_services.getMessages(phone, function(data) {
+			console.log('ALL MESSAGES IN THE BDD FOR ONE PHONE ' + data);	
+			socket.emit('messages_bdd', data);
+		});
+	
+		/*if (all_messages != null) {
+			socket.emit('messages_bdd', all_messages);
+		}*/
+			
     });
 
-	// on lui envoie les messages en attente 
-	socket.emit('receive_msg', {msg:'On a checké ta base ' + socket.phone});
 
 	socket.on('message', function(message) {
 	  	// écrire dans la BDD les messages
 	  	console.log(message)
 	  	// dire à tout le monde d'envoyer un check
-	  	socket.broadcast.emit('send_me_a_check');
-	  });
+	  	// io.emit('send_me_a_check');
 
-	socket.on('check', function() {
-		// on vérifie s'il y a des nouveaux messages dans la bdd 
-		console.log('Check reçu sur serveur : à envoyer à ' + socket.phone);
-		socket.emit('receive_msg', {msg:'Tu as un nouveau message :) ' + socket.phone});
-	});
+	  	// envoyer le message aux téléphones concernés qui sont en ligne
+	  	var phonesToSend = JSON.parse(message.phones);
+	  	console.log(phonesToSend);
+	  	n = phonesToSend.length;
+	  	console.log(n);
+	  	
+	  	for (i = 0; i < n; i++) {
+	  		console.log(phonesToSend[i]);
+	  		console.log(phones_connected);
+
+		  	if (phones_connected.hasOwnProperty(phonesToSend[i])) {
+		  		console.log('Le téléphone est connecté, on lui envoie le message');
+		  		var you = phones_connected[phonesToSend[i]];
+		  		io.to(you).emit('receive_msg', message.content);
+		 	}
+		 		// Si le téléphone n'est pas connecté, on stocke le message dans la BDD
+	  		else {
+	  			// on utilise services/users
+	  			users_services.saveMessages(message.content, phonesToSend[i]);
+		  		console.log('Le téléphone n est pas connecté, on stocke le message dans la BDD');
+	  		}
+	  	}
+	 });
+
+	socket.on('disconnect', function() {
+		console.log('On déconnecte le client : ');
+	})
 });
 /*
 io.on('connection', function (socket) {

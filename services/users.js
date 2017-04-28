@@ -91,7 +91,31 @@ function deleteUser(req, res)
     var phone = req.params.phone;
     
     db.deleteIt(phone, function() {
+        
         res.status(200).send("ok");
+    })
+}
+
+function saveMessages(message, phone) 
+{
+    db.addMessage(message, phone, function() {
+        // res.status(200).send("ok");
+    })
+}
+
+function getMessages(phone, callback) 
+{
+    db.getMess(phone, function(error,data)   
+     {
+         if (error == null)
+         {
+            console.log(data);
+         }
+         else
+         {
+             console.log(error);
+         }
+         callback(data);
     })
 }
 
@@ -102,5 +126,7 @@ module.exports = {
   addUser,
   listUsersWithin, 
   updateUserLocalisation,
-  deleteUser
+  deleteUser,
+  saveMessages,
+  getMessages
 };

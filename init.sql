@@ -26,6 +26,12 @@ CREATE TABLE Users (
     PRIMARY KEY (phone)
 );
 
+CREATE TABLE Messages (
+    phone varchar(20),
+    messages varchar(500),
+    FOREIGN KEY (phone) REFERENCES Users(phone)
+);
+
 --  1 rue des clercs
 INSERT INTO Users (phone, localisation, nom, prenom) VALUES ('0630637680', 'POINT(45.192214 5.730174799999986)', 'RIFFARD', 'Nicolas'); 
 
@@ -34,5 +40,9 @@ INSERT INTO Users (phone, localisation, nom, prenom) VALUES ('0928492048', 'POIN
 
 -- Gare
 INSERT INTO Users (phone, localisation, nom, prenom) VALUES ('0988776655', 'POINT(45.191507 5.714501)', 'Gare', 'Grenoble'); 
+
+-- Gare
+INSERT INTO Users (phone, localisation, nom, prenom) VALUES ('0123456789', 'POINT(45.191507 5.714501)', 'Gare', 'Grenoble'); 
+
 
 select * from users where st_dwithin(users.localisation, 'POINT(45.187481 5.715466)', 3000);

@@ -83,11 +83,39 @@ function deleteIt(phone, callback)
     })
 }
 
+function addMessage(message, phone, callback)
+{
+    var requete = `INSERT INTO public.messages (phone, messages) VALUES ('${phone}', '${message}')`
+    console.log(requete);
+    
+    db.none(requete, null).then(function (data) {
+                callback();
+    }).catch(function(error) {
+        console.log(error) // devrait normalement remonte à la page web
+    })
+}
+
+function getMess(phone, callback) {
+    // ne pas oublier de retirer les messages ensuite !!!!!!
+    var requete = `SELECT messages FROM public.messages where phone='${phone}'`
+    console.log(requete);
+    
+    db.any(requete, null)
+            .then(function (data)  {
+                callback(null, data)
+    })
+            .catch(function(error)  {
+                callback(error, null)
+    })    
+}
+
 module.exports = {
   getAllPhones,
   getThePhone,
   addPhoneUser,
   getUsersWithin, 
   updateUserLoc,
-  deleteIt
+  deleteIt,
+  addMessage,
+  getMess
 };
