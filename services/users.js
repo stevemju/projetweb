@@ -44,6 +44,8 @@ function isThePhone(req, res) {
 
 function addUser(req, res)
 {
+    //console.log('RES : ' + res.body.prenom);
+    console.log('REQ : ' + req.body.prenom);
     var phone = req.body.phone
     var nom = req.body.nom
     var prenom = req.body.prenom
@@ -91,7 +93,7 @@ function deleteUser(req, res)
     var phone = req.params.phone;
     
     db.deleteIt(phone, function() {
-        
+
         res.status(200).send("ok");
     })
 }

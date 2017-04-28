@@ -2,13 +2,19 @@ var express = require('express');
 var path = require('path');
 var app = express(); // creation du serveur
 var server = require('http').createServer(app);
+var bodyParser = require('body-parser');  // envoie des paramètres en POST
 var io = require('socket.io')(server);
 var users_router = require('./routes/users_ctrl');
 var users_services = require('./services/users')
 
+
+// parse application/x-www-form-urlencoded 
+app.use(bodyParser.urlencoded({ extended: false }));
+ // parse application/json 
+app.use(bodyParser.json());
+
 app.use('/api/', users_router);
 
-var io = require('socket.io')(server);
 var phones_connected = {};
 var all_messages;
 var i, n;
