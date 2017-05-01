@@ -18,6 +18,7 @@ app.use('/api/', users_router);
 var phones_connected = {};
 var all_messages;
 var i, n;
+var curiosite;
 
 io.on('connection', function (socket) {
 	var phone;
@@ -30,8 +31,11 @@ io.on('connection', function (socket) {
         socket.emit('receive_msg', 'On a checké ta base ' + phone);
 		// on lui envoie les messages en attente 
 		users_services.getMessages(phone, function(data) {
-			console.log('ALL MESSAGES IN THE BDD FOR ONE PHONE ' + data);	
+		//	console.log('ALL MESSAGES IN THE BDD FOR ONE PHONE ' + data);	
 			socket.emit('messages_bdd', data);
+			console.log('Les messages ont été checkés et envoyés à l utilisateur');
+			// on peut maintenant supprimer les messages de la BDD : 
+			users_services.deleteMessages(phone);
 		});
 	
 		/*if (all_messages != null) {
@@ -43,36 +47,54 @@ io.on('connection', function (socket) {
 
 	socket.on('message', function(message) {
 	  	// écrire dans la BDD les messages
-	  	console.log(message)
+	  //	console.log('Message content : ' + message.content)
 	  	// dire à tout le monde d'envoyer un check
 	  	// io.emit('send_me_a_check');
 
 	  	// envoyer le message aux téléphones concernés qui sont en ligne
 	  	var phonesToSend = JSON.parse(message.phones);
-	  	console.log(phonesToSend);
+	  	console.log('Téléphones à envoyer : ' + phonesToSend);
 	  	n = phonesToSend.length;
-	  	console.log(n);
+	 // 	console.log(n);
 	  	
 	  	for (i = 0; i < n; i++) {
-	  		console.log(phonesToSend[i]);
-	  		console.log(phones_connected);
+	  		//console.log('phonesToSend : ' + phonesToSend[i]);
+	  		var phonesToSendI = phonesToSend[i];
+	  		curiosite = phonesToSend[i];
+	  //		console.log(phones_connected);
 
-		  	if (phones_connected.hasOwnProperty(phonesToSend[i])) {
-		  		console.log('Le téléphone est connecté, on lui envoie le message');
-		  		var you = phones_connected[phonesToSend[i]];
+		  	if (phones_connected.hasOwnProperty(phonesToSendI)) {
+		  		console.log('Le téléphone : ' + phonesToSend[i] + ' est connecté, on lui envoie le message');
+		  		var you = phones_connected[phonesToSendI];
 		  		io.to(you).emit('receive_msg', message.content);
 		 	}
 		 		// Si le téléphone n'est pas connecté, on stocke le message dans la BDD
 	  		else {
+	  			console.log('Le téléphone ' + phonesToSend[i] + 'n est pas connecté, on stocke le message dans la BDD');
 	  			// on utilise services/users
-	  			users_services.saveMessages(message.content, phonesToSend[i]);
-		  		console.log('Le téléphone n est pas connecté, on stocke le message dans la BDD');
+	  			users_services.listUsersWithin(message.localisation, 1000, phonesToSend[i], function(data) {
+	  				// on ne garde que les téléphones qui sont à proximité 
+	  	//			console.log('Data dans UsersWithin : ' + data.length);
+	  	//			console.log('Data UsersWithiN[0].phone : ' + data[0].phone);
+	  	//			console.log('PhonesTOSEND length : ' + phonesToSend.length);
+	  				for (var k = 0; k < data.length; k++) {
+	  	//				console.log('phonesToSEDN : ' + phonesToSendI);
+	  					//console.log('THe Phone : ' + curiosite);
+	  					if (data[k].phone == data.thePhone) {
+	  						console.log('J ajoute un message à la BDD');
+	  						users_services.saveMessages(message.content, data[k].phone);
+	  					}
+	  				}
+	  	//			console.log('Numéros à proximité : ' + data);
+	  				//users_services.saveMessages(message.content, phonesToSend[i]);
+	  			})
 	  		}
 	  	}
 	 });
 
 	socket.on('disconnect', function() {
 		console.log('On déconnecte le client : ');
+		delete phones_connected[phone];
 	})
 });
 /*

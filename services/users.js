@@ -56,25 +56,23 @@ function addUser(req, res)
     })
 }
 
-function listUsersWithin(req, res)
+function listUsersWithin(localisation, rayon, phone, callback)
 {
-    const localisation = req.params.localisation;
-    const rayon = req.params.rayon;
+  //  const localisation = req.params.localisation;
+  //  const rayon = req.params.rayon;
     
-    db.getUsersWithin(localisation, rayon, function(error,data) 
+    db.getUsersWithin(localisation, rayon, function(error,data)   
      {
          if (error == null)
          {
-            res.status(200).json({
-                users : data
-            });
             console.log(data);
          }
          else
          {
              console.log(error);
-             res.status(500).send(error);
          }
+         data.thePhone = phone;
+         callback(data);
     })
 }
 
@@ -93,7 +91,6 @@ function deleteUser(req, res)
     var phone = req.params.phone;
     
     db.deleteIt(phone, function() {
-
         res.status(200).send("ok");
     })
 }
@@ -121,6 +118,13 @@ function getMessages(phone, callback)
     })
 }
 
+function deleteMessages(phone) 
+{
+    db.deleteMess(phone, function() {
+       // res.status(200).send("ok");
+    })
+}
+
 
 module.exports = {
   listAllPhones,
@@ -130,5 +134,6 @@ module.exports = {
   updateUserLocalisation,
   deleteUser,
   saveMessages,
-  getMessages
+  getMessages,
+  deleteMessages
 };

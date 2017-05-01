@@ -34,11 +34,12 @@ function addPhoneUser(phone, localisation, nom, prenom, callback)
     var requete = `INSERT INTO public.users (phone, localisation, nom, prenom) VALUES ('${phone}', '${localisation}', '${nom}', '${prenom}')`
     console.log(requete);
     
-    db.none(requete, null).
-            then(function (data) {
+    db.none(requete, null)
+            .then(function (data) {
                 callback();
     }).catch(function(error) {
-        console.log(error) // devrait normalement remonte à la page web
+        console.log(error)
+        callback(); // devrait normalement remonte à la page web
     })
 }
 
@@ -88,10 +89,12 @@ function addMessage(message, phone, callback)
     var requete = `INSERT INTO public.messages (phone, messages) VALUES ('${phone}', '${message}')`
     console.log(requete);
     
-    db.none(requete, null).then(function (data) {
+    db.none(requete, null)
+        .then(function (data) {
                 callback();
-    }).catch(function(error) {
-        console.log(error) // devrait normalement remonte à la page web
+    })
+        .catch(function(error) {
+         console.log(error) // devrait normalement remonte à la page web
     })
 }
 
@@ -109,6 +112,20 @@ function getMess(phone, callback) {
     })    
 }
 
+function deleteMess(phone, callback)
+{
+    var requete = `DELETE FROM public.messages WHERE phone='${phone}'`
+    
+    console.log(requete);
+    
+    db.none(requete, null).
+            then(function (data) {
+                callback();
+            }).catch(function(error) {
+        console.log(error) // devrait normalement remonter à la page web
+    })
+}
+
 module.exports = {
   getAllPhones,
   getThePhone,
@@ -117,5 +134,6 @@ module.exports = {
   updateUserLoc,
   deleteIt,
   addMessage,
-  getMess
+  getMess,
+  deleteMess
 };
