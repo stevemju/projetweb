@@ -97,6 +97,7 @@ function deleteUser(req, res)
 
 function saveMessages(message, phone) 
 {
+    // pas besoin de fonction de callback
     db.addMessage(message, phone, function() {
         // res.status(200).send("ok");
     })
@@ -120,6 +121,7 @@ function getMessages(phone, callback)
 
 function deleteMessages(phone) 
 {
+    // pas besoin de fonction de callback
     db.deleteMess(phone, function() {
        // res.status(200).send("ok");
     })
