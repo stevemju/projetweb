@@ -84,9 +84,9 @@ function deleteIt(phone, callback)
     })
 }
 
-function addMessage(message, phone, callback)
+function addMessage(message, phone, phone_emetteur, timestamp, callback)
 {
-    var requete = `INSERT INTO public.messages (phone, messages) VALUES ('${phone}', '${message}')`
+    var requete = `INSERT INTO public.messages (phone, phone_emetteur, messages, time) VALUES ('${phone}', '${phone_emetteur}', '${message}', ${timestamp})`
     console.log(requete);
     
     db.none(requete, null)
@@ -100,7 +100,7 @@ function addMessage(message, phone, callback)
 
 function getMess(phone, callback) {
     // ne pas oublier de retirer les messages ensuite !!!!!!
-    var requete = `SELECT messages FROM public.messages where phone='${phone}'`
+    var requete = `SELECT messages, phone, time, phone_emetteur FROM public.messages where phone='${phone}'`
     console.log(requete);
     
     db.any(requete, null)
@@ -126,6 +126,20 @@ function deleteMess(phone, callback)
     })
 }
 
+function getNameAndSurname(phone, callback) 
+{
+    var requete = `SELECT nom, prenom FROM public.users where phone='${phone}'`
+    console.log(requete);
+    
+    db.any(requete, null)
+            .then(function (data)  {
+                callback(null, data)
+    })
+            .catch(function(error)  {
+                callback(error, null)
+    })    
+}
+
 module.exports = {
   getAllPhones,
   getThePhone,
@@ -135,5 +149,6 @@ module.exports = {
   deleteIt,
   addMessage,
   getMess,
-  deleteMess
+  deleteMess,
+  getNameAndSurname
 };

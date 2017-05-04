@@ -28,7 +28,9 @@ CREATE TABLE Users (
 
 CREATE TABLE Messages (
     phone varchar(20),
+    phone_emetteur varchar(20),
     messages varchar(500),
+    time integer,
     FOREIGN KEY (phone) REFERENCES Users(phone)
 );
 
@@ -43,6 +45,8 @@ INSERT INTO Users (phone, localisation, nom, prenom) VALUES ('0988776655', 'POIN
 
 -- Gare
 INSERT INTO Users (phone, localisation, nom, prenom) VALUES ('0123456789', 'POINT(45.191507 5.714501)', 'Gare', 'Grenoble'); 
+
+insert into messages(phone, messages, time) VALUES ('1234567890', 'ON LE VIRE', 414961);
 
 
 select * from users where st_dwithin(users.localisation, 'POINT(45.187481 5.715466)', 3000);

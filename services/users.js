@@ -52,7 +52,9 @@ function addUser(req, res)
     var localisation = req.body.localisation
     
     db.addPhoneUser(phone, localisation, nom, prenom, function () {
-        res.status(200).send("ok");
+        res.status(200).json({
+                success : 'success'
+            });
     })
 }
 
@@ -82,8 +84,16 @@ function updateUserLocalisation(req, res)
     var phone = req.body.phone;
     
     db.updateUserLoc(localisation, phone, function() {
-        res.status(200).send("ok");
+        res.status(200).json({
+                success : 'success'
+            });    
     })
+}
+
+function getName(phone, callback) {
+    db.getNameAndSurname(phone, function(data) {
+        callback(data);
+    });
 }
 
 function deleteUser(req, res)
@@ -95,10 +105,10 @@ function deleteUser(req, res)
     })
 }
 
-function saveMessages(message, phone) 
+function saveMessages(message, phone, phone_emetteur, timestamp) 
 {
     // pas besoin de fonction de callback
-    db.addMessage(message, phone, function() {
+    db.addMessage(message, phone, phone_emetteur, timestamp, function() {
         // res.status(200).send("ok");
     })
 }
@@ -137,5 +147,6 @@ module.exports = {
   deleteUser,
   saveMessages,
   getMessages,
-  deleteMessages
+  deleteMessages,
+  getName
 };
